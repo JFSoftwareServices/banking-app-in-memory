@@ -70,10 +70,7 @@ public class AccountServiceImpl implements AccountService {
             try {
                 debitAccount.debit(amount);
                 creditAccount.credit(amount);
-
-                accountRepository.save(debitAccount);
-                accountRepository.save(creditAccount);
-
+                
                 Transaction transaction =
                         new Transaction(debitAccount.getAccountNumber(), creditAccount.getAccountNumber(), amount);
                 debitAccount.addTransaction(transaction);
