@@ -29,9 +29,9 @@ public class AccountServiceImpl implements AccountService {
     @Autowired
     private TransactionRepository transactionRepository;
 
-
     private final Lock lock = new ReentrantLock(true);
 
+    @Override
     public Account create(Account account) throws InterruptedException {
         if (lock.tryLock(1, TimeUnit.SECONDS)) {
             try {
@@ -46,6 +46,7 @@ public class AccountServiceImpl implements AccountService {
         }
     }
 
+    @Override
     public List<Account> findAll() throws InterruptedException {
         if (lock.tryLock(1, TimeUnit.SECONDS)) {
             try {
@@ -58,6 +59,7 @@ public class AccountServiceImpl implements AccountService {
         }
     }
 
+    @Override
     public Account findByAccountNumber(String accountNumber) throws InterruptedException {
         if (lock.tryLock(1, TimeUnit.SECONDS)) {
             try {

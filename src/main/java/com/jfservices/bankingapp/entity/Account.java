@@ -19,7 +19,6 @@ public class Account implements Serializable {
 
     private List<Transaction> transactions = new ArrayList<>();
 
-
     public void debit(BigDecimal amount) {
         currentBalance = currentBalance.subtract(amount);
     }
@@ -28,16 +27,9 @@ public class Account implements Serializable {
         currentBalance = currentBalance.add(amount);
     }
 
-    public Transaction transferTo(Account creditAccount, BigDecimal amount) throws InterruptedException {
-        Transaction transaction =
-                new Transaction(this.getAccountNumber(), creditAccount.getAccountNumber(), amount);
+    public void transferTo(Account creditAccount, BigDecimal amount) {
         this.debit(amount);
         creditAccount.credit(amount);
-        this.addTransaction(transaction);
-        transaction.addAccount(this);
-        creditAccount.addTransaction(transaction);
-        transaction.addAccount(creditAccount);
-        return transaction;
     }
 
     public void addTransaction(Transaction transaction) {
