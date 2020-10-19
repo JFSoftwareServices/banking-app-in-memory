@@ -12,13 +12,13 @@ import java.util.List;
 @Service
 public interface AccountService {
 
-    List<Account> findAll();
+    List<Account> findAll() throws Exception;
 
-    Account create(Account account);
+    Account create(Account account) throws Exception;
 
-    Account findByAccountNumber(String accountNumber);
+    Account findByAccountNumber(String accountNumber) throws Exception;
 
     Transaction sendMoney(RequestTransferBalanceDTO transferBalanceRequest) throws Exception;
 
-    ResponseStatementDTO getStatement(String accountNumber) throws InterruptedException;
+    ResponseStatementDTO getStatement(String accountNumber) throws Exception;
 }

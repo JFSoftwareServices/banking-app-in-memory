@@ -28,7 +28,7 @@ public class AccountController implements AccountContract {
     private AccountService accountService;
 
     @Override
-    public ResponseEntity<ResponseAccountDTO> create(RequestAccountDTO requestAccountDTO) {
+    public ResponseEntity<ResponseAccountDTO> create(RequestAccountDTO requestAccountDTO) throws Exception {
         log.info("Creating account {}", requestAccountDTO);
         Account account = accountService.create(modelMap(requestAccountDTO, Account.class));
         ResponseAccountDTO accountDTO = convertAccountToAccountDto(account);
@@ -37,7 +37,7 @@ public class AccountController implements AccountContract {
     }
 
     @Override
-    public ResponseEntity<List<ResponseAccountDTO>> findAll() {
+    public ResponseEntity<List<ResponseAccountDTO>> findAll() throws Exception {
         log.info("Looking for all accounts");
         List<ResponseAccountDTO> accounts =
                 accountService
@@ -66,7 +66,7 @@ public class AccountController implements AccountContract {
     }
 
     @Override
-    public ResponseEntity<ResponseStatementDTO> getStatement(String accountNumber) throws InterruptedException {
+    public ResponseEntity<ResponseStatementDTO> getStatement(String accountNumber) throws Exception {
         log.info("Retrieving statements for account {}", accountNumber);
         ResponseStatementDTO statement = accountService.getStatement(accountNumber);
         log.info("Retrieved statements for account {}", accountNumber);
@@ -74,7 +74,7 @@ public class AccountController implements AccountContract {
     }
 
     @Override
-    public ResponseEntity<ResponseAccountDTO> findByAccountNumber(String accountNumber) {
+    public ResponseEntity<ResponseAccountDTO> findByAccountNumber(String accountNumber) throws Exception {
         log.info("Retrieving account {}", accountNumber);
         ResponseAccountDTO accountDTO;
         accountDTO = ModelMapperService
