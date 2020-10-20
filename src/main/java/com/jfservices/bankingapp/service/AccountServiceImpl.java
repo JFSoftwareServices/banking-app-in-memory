@@ -14,8 +14,8 @@ import org.springframework.stereotype.Component;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import static com.jfservices.bankingapp.service.ModelMapperService.mapList;
 
@@ -29,17 +29,17 @@ public class AccountServiceImpl implements AccountService {
     @Autowired
     private TransactionRepository transactionRepository;
 
-    private final Lock lock = new ReentrantLock(true);
+    private final ReadWriteLock lock = new ReentrantReadWriteLock(true);
 
     @Override
     public Account create(Account account) throws InterruptedException {
-        if (lock.tryLock(1, TimeUnit.SECONDS)) {
+        if (lock.writeLock().tryLock(1, TimeUnit.SECONDS)) {
             try {
                 accountRepository.save(account);
                 return accountRepository.findByAccountNumber(account.getAccountNumber())
                         .orElseThrow(() -> (new AccountNotFoundException(account.getAccountNumber())));
             } finally {
-                lock.unlock();
+                lock.writeLock().unlock();
             }
         } else {
             throw new UnableToObtainLockException();
@@ -48,11 +48,11 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public List<Account> findAll() throws InterruptedException {
-        if (lock.tryLock(1, TimeUnit.SECONDS)) {
+        if (lock.readLock().tryLock(1, TimeUnit.SECONDS)) {
             try {
                 return accountRepository.findAll();
             } finally {
-                lock.unlock();
+                lock.readLock().unlock();
             }
         } else {
             throw new UnableToObtainLockException();
@@ -61,12 +61,12 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public Account findByAccountNumber(String accountNumber) throws InterruptedException {
-        if (lock.tryLock(1, TimeUnit.SECONDS)) {
+        if (lock.readLock().tryLock(1, TimeUnit.SECONDS)) {
             try {
                 return accountRepository.findByAccountNumber(accountNumber)
                         .orElseThrow(() -> (new AccountNotFoundException(accountNumber)));
             } finally {
-                lock.unlock();
+                lock.readLock().unlock();
             }
         } else {
             throw new UnableToObtainLockException();
@@ -75,7 +75,7 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public Transaction sendMoney(RequestTransferBalanceDTO transferBalanceRequest) throws InterruptedException {
-        if (lock.tryLock(1, TimeUnit.SECONDS)) {
+        if (lock.writeLock().tryLock(1, TimeUnit.SECONDS)) {
             try {
                 String debitAccountNumber = transferBalanceRequest.getDebitAccountNumber();
                 String creditAccountNumber = transferBalanceRequest.getCreditAccountNumber();
@@ -105,7 +105,7 @@ public class AccountServiceImpl implements AccountService {
                 return transaction;
 
             } finally {
-                lock.unlock();
+                lock.writeLock().unlock();
             }
         } else {
             throw new UnableToObtainLockException();
@@ -114,7 +114,7 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public ResponseStatementDTO getStatement(String accountNumber) throws InterruptedException {
-        if (lock.tryLock(1, TimeUnit.SECONDS)) {
+        if (lock.readLock().tryLock(1, TimeUnit.SECONDS)) {
             try {
                 Account account = accountRepository.findByAccountNumber(accountNumber)
                         .orElseThrow(() -> (new AccountNotFoundException(accountNumber)));
@@ -127,7 +127,7 @@ public class AccountServiceImpl implements AccountService {
                         .transactionHistory(responseTransactionDTOS).build();
 
             } finally {
-                lock.unlock();
+                lock.readLock().unlock();
             }
         } else {
             throw new UnableToObtainLockException();
