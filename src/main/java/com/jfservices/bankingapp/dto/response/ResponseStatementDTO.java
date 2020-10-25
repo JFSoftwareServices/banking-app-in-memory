@@ -12,5 +12,5 @@ import java.util.List;
 public class ResponseStatementDTO implements Serializable {
     private static final long serialVersionUID = 1L;
     private BigDecimal currentBalance;
-    private List<ResponseTransactionDTO> transactionHistory;
+    private List<ResponseTransferTransactionDTO> transactionHistory;
 }

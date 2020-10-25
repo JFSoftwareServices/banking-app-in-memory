@@ -1,10 +1,10 @@
 package com.jfservices.bankingapp.controller.api;
 
 import com.jfservices.bankingapp.dto.request.RequestAccountDTO;
-import com.jfservices.bankingapp.dto.request.RequestTransferBalanceDTO;
+import com.jfservices.bankingapp.dto.request.RequestTransferTransactionDTO;
 import com.jfservices.bankingapp.dto.response.ResponseAccountDTO;
 import com.jfservices.bankingapp.dto.response.ResponseStatementDTO;
-import com.jfservices.bankingapp.dto.response.ResponseTransactionDTO;
+import com.jfservices.bankingapp.dto.response.ResponseTransferTransactionDTO;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -27,8 +27,8 @@ public interface AccountContract {
     @GetMapping("/all")
     ResponseEntity<List<ResponseAccountDTO>> findAll() throws Exception;
 
-    @PostMapping("/sendmoney")
-    ResponseEntity<ResponseTransactionDTO> sendMoney(@RequestBody() RequestTransferBalanceDTO transferBalanceRequest) throws Exception;
+    @PostMapping("/transfer")
+    ResponseEntity<ResponseTransferTransactionDTO> transfer(@RequestBody() RequestTransferTransactionDTO transferBalanceRequest) throws Exception;
 
     @GetMapping("/statement/{accountNumber}")
     ResponseEntity<ResponseStatementDTO> getStatement(@PathVariable()

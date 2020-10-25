@@ -1,13 +1,11 @@
 package com.jfservices.bankingapp.service;
 
-
-import com.jfservices.bankingapp.dto.request.RequestTransferBalanceDTO;
+import com.jfservices.bankingapp.dto.request.RequestTransferTransactionDTO;
 import com.jfservices.bankingapp.dto.response.ResponseStatementDTO;
-import com.jfservices.bankingapp.dto.response.ResponseTransactionDTO;
+import com.jfservices.bankingapp.dto.response.ResponseTransferTransactionDTO;
 import com.jfservices.bankingapp.entity.Account;
 import com.jfservices.bankingapp.entity.Transaction;
 import com.jfservices.bankingapp.repository.AccountRepository;
-import com.jfservices.bankingapp.repository.TransactionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -25,9 +23,6 @@ public class AccountServiceImpl implements AccountService {
 
     @Autowired
     private AccountRepository accountRepository;
-
-    @Autowired
-    private TransactionRepository transactionRepository;
 
     private final ReadWriteLock lock = new ReentrantReadWriteLock(true);
 
@@ -74,33 +69,22 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public Transaction sendMoney(RequestTransferBalanceDTO transferBalanceRequest) throws InterruptedException {
+    public Transaction transfer(RequestTransferTransactionDTO transferBalanceRequest) throws InterruptedException {
         if (lock.writeLock().tryLock(1, TimeUnit.SECONDS)) {
             try {
-                String debitAccountNumber = transferBalanceRequest.getDebitAccountNumber();
-                String creditAccountNumber = transferBalanceRequest.getCreditAccountNumber();
+                Account debitAccount = findAccount(transferBalanceRequest.getDebitAccountNumber());
+                Account creditAccount = findAccount(transferBalanceRequest.getCreditAccountNumber());
+
                 BigDecimal amount = transferBalanceRequest.getAmount();
-
-                Account debitAccount = accountRepository.findByAccountNumber(debitAccountNumber)
-                        .orElseThrow(() -> (new AccountNotFoundException(debitAccountNumber)));
-
                 if (amount.compareTo(debitAccount.getCurrentBalance()) > 0) {
                     throw new InsufficientFundsException(debitAccount);
                 }
 
-                Account creditAccount = accountRepository.findByAccountNumber(creditAccountNumber)
-                        .orElseThrow(() -> (new AccountNotFoundException(creditAccountNumber)));
-
                 creditAccount.transferTo(debitAccount, amount);
-
                 Transaction transaction =
                         new Transaction(debitAccount.getAccountNumber(), creditAccount.getAccountNumber(), amount);
                 debitAccount.addTransaction(transaction);
-                transaction.addAccount(debitAccount);
                 creditAccount.addTransaction(transaction);
-                transaction.addAccount(creditAccount);
-
-                transactionRepository.save(transaction);
 
                 return transaction;
 
@@ -112,6 +96,11 @@ public class AccountServiceImpl implements AccountService {
         }
     }
 
+    private Account findAccount(String accountNumber) {
+        return accountRepository.findByAccountNumber(accountNumber)
+                .orElseThrow(() -> (new AccountNotFoundException(accountNumber)));
+    }
+
     @Override
     public ResponseStatementDTO getStatement(String accountNumber) throws InterruptedException {
         if (lock.readLock().tryLock(1, TimeUnit.SECONDS)) {
@@ -119,8 +108,8 @@ public class AccountServiceImpl implements AccountService {
                 Account account = accountRepository.findByAccountNumber(accountNumber)
                         .orElseThrow(() -> (new AccountNotFoundException(accountNumber)));
 
-                List<ResponseTransactionDTO> responseTransactionDTOS = mapList(account.getTransactions(),
-                        ResponseTransactionDTO.class);
+                List<ResponseTransferTransactionDTO> responseTransactionDTOS = mapList(account.getTransactions(),
+                        ResponseTransferTransactionDTO.class);
 
                 return ResponseStatementDTO.builder()
                         .currentBalance(account.getCurrentBalance())

@@ -11,5 +11,5 @@ public class ResponseAccountDTO implements Serializable {
     private static final long serialVersionUID = 1L;
     private String accountNumber;
     private BigDecimal currentBalance;
-    private List<ResponseTransactionDTO> transactions;
+    private List<ResponseTransferTransactionDTO> transactions;
 }

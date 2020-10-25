@@ -1,7 +1,7 @@
 package com.jfservices.bankingapp.service;
 
 import com.jfservices.bankingapp.dto.response.ResponseAccountDTO;
-import com.jfservices.bankingapp.dto.response.ResponseTransactionDTO;
+import com.jfservices.bankingapp.dto.response.ResponseTransferTransactionDTO;
 import com.jfservices.bankingapp.entity.Account;
 import org.modelmapper.ModelMapper;
 
@@ -13,7 +13,7 @@ public class ModelMapperService {
     private static ModelMapper modelMapper = new ModelMapper();
 
     public static ResponseAccountDTO convertAccountToAccountDto(Account account) {
-        List<ResponseTransactionDTO> transactionDTOs = mapList(account.getTransactions(), ResponseTransactionDTO.class);
+        List<ResponseTransferTransactionDTO> transactionDTOs = mapList(account.getTransactions(), ResponseTransferTransactionDTO.class);
         ResponseAccountDTO accountDTO = modelMap(account, ResponseAccountDTO.class);
         accountDTO.setTransactions(transactionDTOs);
         return accountDTO;

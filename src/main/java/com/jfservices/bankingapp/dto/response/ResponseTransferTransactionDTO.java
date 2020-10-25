@@ -8,7 +8,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
-public class ResponseTransactionDTO implements Serializable {
+public class ResponseTransferTransactionDTO implements Serializable {
     private static final long serialVersionUID = 1L;
     private String debitAccountNumber;
     private String creditAccountNumber;

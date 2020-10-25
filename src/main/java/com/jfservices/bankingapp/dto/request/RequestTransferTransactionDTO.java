@@ -6,7 +6,7 @@ import javax.validation.constraints.*;
 import java.math.BigDecimal;
 
 @Data
-public class RequestTransferBalanceDTO {
+public class RequestTransferTransactionDTO {
     @NotEmpty(message = "debitAccountNumber cannot be missing or empty")
     @Size(min = 7, max = 7, message = "debitAccountNumber must be 7 characters")
     private String debitAccountNumber;

@@ -1,7 +1,7 @@
 package com.jfservices.bankingapp.service;
 
 
-import com.jfservices.bankingapp.dto.request.RequestTransferBalanceDTO;
+import com.jfservices.bankingapp.dto.request.RequestTransferTransactionDTO;
 import com.jfservices.bankingapp.dto.response.ResponseStatementDTO;
 import com.jfservices.bankingapp.entity.Account;
 import com.jfservices.bankingapp.entity.Transaction;
@@ -18,7 +18,7 @@ public interface AccountService {
 
     Account findByAccountNumber(String accountNumber) throws Exception;
 
-    Transaction sendMoney(RequestTransferBalanceDTO transferBalanceRequest) throws Exception;
+    Transaction transfer(RequestTransferTransactionDTO transferBalanceRequest) throws Exception;
 
     ResponseStatementDTO getStatement(String accountNumber) throws Exception;
 }

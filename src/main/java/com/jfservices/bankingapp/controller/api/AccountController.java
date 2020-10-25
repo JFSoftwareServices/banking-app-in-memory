@@ -2,10 +2,10 @@ package com.jfservices.bankingapp.controller.api;
 
 
 import com.jfservices.bankingapp.dto.request.RequestAccountDTO;
-import com.jfservices.bankingapp.dto.request.RequestTransferBalanceDTO;
+import com.jfservices.bankingapp.dto.request.RequestTransferTransactionDTO;
 import com.jfservices.bankingapp.dto.response.ResponseAccountDTO;
 import com.jfservices.bankingapp.dto.response.ResponseStatementDTO;
-import com.jfservices.bankingapp.dto.response.ResponseTransactionDTO;
+import com.jfservices.bankingapp.dto.response.ResponseTransferTransactionDTO;
 import com.jfservices.bankingapp.entity.Account;
 import com.jfservices.bankingapp.service.AccountService;
 import com.jfservices.bankingapp.service.ModelMapperService;
@@ -50,14 +50,14 @@ public class AccountController implements AccountContract {
     }
 
     @Override
-    public ResponseEntity<ResponseTransactionDTO> sendMoney(RequestTransferBalanceDTO requestTransferBalanceDTO)
+    public ResponseEntity<ResponseTransferTransactionDTO> transfer(RequestTransferTransactionDTO requestTransferBalanceDTO)
             throws Exception {
         log.info("Transferring {} from account {} to account {}", requestTransferBalanceDTO.getAmount(),
                 requestTransferBalanceDTO.getDebitAccountNumber(),
                 requestTransferBalanceDTO.getCreditAccountNumber());
 
-        ResponseTransactionDTO transaction =
-                modelMap(accountService.sendMoney(requestTransferBalanceDTO), ResponseTransactionDTO.class);
+        ResponseTransferTransactionDTO transaction =
+                modelMap(accountService.transfer(requestTransferBalanceDTO), ResponseTransferTransactionDTO.class);
 
         log.info("Successfully transferred {} from account {} to account {}", requestTransferBalanceDTO.getAmount(),
                 requestTransferBalanceDTO.getDebitAccountNumber(),
