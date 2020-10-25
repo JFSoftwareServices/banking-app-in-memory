@@ -28,7 +28,7 @@ public class AccountController implements AccountContract {
     private AccountService accountService;
 
     @Override
-    public ResponseEntity<ResponseAccountDTO> create(RequestAccountDTO requestAccountDTO) throws Exception {
+    public ResponseEntity<ResponseAccountDTO> createAccount(RequestAccountDTO requestAccountDTO) throws Exception {
         log.info("Creating account {}", requestAccountDTO);
         Account account = accountService.create(modelMap(requestAccountDTO, Account.class));
         ResponseAccountDTO accountDTO = convertAccountToAccountDto(account);
@@ -37,7 +37,7 @@ public class AccountController implements AccountContract {
     }
 
     @Override
-    public ResponseEntity<List<ResponseAccountDTO>> findAll() throws Exception {
+    public ResponseEntity<List<ResponseAccountDTO>> findAllAccounts() throws Exception {
         log.info("Looking for all accounts");
         List<ResponseAccountDTO> accounts =
                 accountService
@@ -50,7 +50,7 @@ public class AccountController implements AccountContract {
     }
 
     @Override
-    public ResponseEntity<ResponseTransferTransactionDTO> transfer(RequestTransferTransactionDTO requestTransferBalanceDTO)
+    public ResponseEntity<ResponseTransferTransactionDTO> sendMoney(RequestTransferTransactionDTO requestTransferBalanceDTO)
             throws Exception {
         log.info("Transferring {} from account {} to account {}", requestTransferBalanceDTO.getAmount(),
                 requestTransferBalanceDTO.getDebitAccountNumber(),

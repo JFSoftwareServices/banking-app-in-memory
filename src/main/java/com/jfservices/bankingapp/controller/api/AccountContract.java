@@ -21,14 +21,14 @@ public interface AccountContract {
 
     //If we need headers then use RequestEntity rather than RequestBody
     //https://goodwinwei.wordpress.com/2017/01/06/springresquestbody-responsebody-vs-httpentityresponseentity/
-    @PostMapping("/create")
-    ResponseEntity<ResponseAccountDTO> create(@RequestBody() RequestAccountDTO requestAccountDTO) throws Exception;
+    @PostMapping("/createAccount")
+    ResponseEntity<ResponseAccountDTO> createAccount(@RequestBody() RequestAccountDTO requestAccountDTO) throws Exception;
 
-    @GetMapping("/all")
-    ResponseEntity<List<ResponseAccountDTO>> findAll() throws Exception;
+    @GetMapping("/allAccounts")
+    ResponseEntity<List<ResponseAccountDTO>> findAllAccounts() throws Exception;
 
-    @PostMapping("/transfer")
-    ResponseEntity<ResponseTransferTransactionDTO> transfer(@RequestBody() RequestTransferTransactionDTO transferBalanceRequest) throws Exception;
+    @PostMapping("/sendMoney")
+    ResponseEntity<ResponseTransferTransactionDTO> sendMoney(@RequestBody() RequestTransferTransactionDTO transferBalanceRequest) throws Exception;
 
     @GetMapping("/statement/{accountNumber}")
     ResponseEntity<ResponseStatementDTO> getStatement(@PathVariable()
