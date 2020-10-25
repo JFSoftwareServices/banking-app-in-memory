@@ -1,11 +1,13 @@
 package com.jfservices.bankingapp.entity;
 
+import lombok.Builder;
 import lombok.Data;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
+@Builder
 public class Transaction {
 
     private static final long serialVersionUID = 1L;
@@ -18,11 +20,5 @@ public class Transaction {
 
     private BigDecimal transactionAmount;
 
-    public Transaction(String debitAccountNumber, String creditAccountNumber, BigDecimal amount) {
-        this.debitAccountNumber = debitAccountNumber;
-        this.creditAccountNumber = creditAccountNumber;
-        this.transactionAmount = amount;
-    }
-
-    private LocalDateTime transactionDateTime = LocalDateTime.now();
+    private LocalDateTime transactionDateTime;
 }

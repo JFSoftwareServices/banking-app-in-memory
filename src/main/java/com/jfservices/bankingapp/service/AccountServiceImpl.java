@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReadWriteLock;
@@ -76,16 +77,17 @@ public class AccountServiceImpl implements AccountService {
                 Account creditAccount = findAccount(transferBalanceRequest.getCreditAccountNumber());
 
                 BigDecimal amount = transferBalanceRequest.getAmount();
-                if (amount.compareTo(debitAccount.getCurrentBalance()) > 0) {
-                    throw new InsufficientFundsException(debitAccount);
-                }
+                checkSufficientBalance(debitAccount, amount);
 
                 creditAccount.transferTo(debitAccount, amount);
-                Transaction transaction =
-                        new Transaction(debitAccount.getAccountNumber(), creditAccount.getAccountNumber(), amount);
+                Transaction transaction = Transaction.builder()
+                        .creditAccountNumber(creditAccount.getAccountNumber())
+                        .debitAccountNumber(debitAccount.getAccountNumber())
+                        .transactionAmount(amount)
+                        .transactionDateTime(LocalDateTime.now())
+                        .build();
                 debitAccount.addTransaction(transaction);
                 creditAccount.addTransaction(transaction);
-
                 return transaction;
 
             } finally {
@@ -99,6 +101,12 @@ public class AccountServiceImpl implements AccountService {
     private Account findAccount(String accountNumber) {
         return accountRepository.findByAccountNumber(accountNumber)
                 .orElseThrow(() -> (new AccountNotFoundException(accountNumber)));
+    }
+
+    private void checkSufficientBalance(Account debitAccount, BigDecimal amount) {
+        if (amount.compareTo(debitAccount.getCurrentBalance()) > 0) {
+            throw new InsufficientFundsException(debitAccount);
+        }
     }
 
     @Override
